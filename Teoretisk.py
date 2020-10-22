@@ -43,8 +43,8 @@ ymax = 300
 # yfast: tabell med 8 heltall mellom 50 og 300 (mm); representerer
 # høyden i de 8 festepunktene
 
-#yfast=np.asarray(np.random.randint(50, ymax, size=8))
-yfast = np.asarray([252,173,143,75,27,58,65,24])
+#yfast=np.asarray(np.random.randint(50, ymax, size=8))                (Brukes til å generere punktene for første gang)
+yfast = np.asarray([252,173,143,75,27,58,65,24])                      #De valgte punktene for forsøket
 
 # inttan: tabell med 7 verdier for (yfast[n+1]-yfast[n])/h (n=0..7); dvs
 # banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
@@ -104,30 +104,9 @@ for i in range(0,len(x)-1):
     u += dt
     t_x.append(u)
 
-data = []
-filename = "Video_06.csv"
-with open(filename) as csvfile:
-    csvreader = csv.reader(csvfile)
-
-    for datapoint in csvreader:
-        values = [float(value) for value in datapoint]
-        data.append(values)
-
-
-målt_t = ([p[0] for p in data])
-målt_x = ([p[1] for p in data])
-målt_y = ([p[2] for p in data])
-
-målt_v_x = (målt_x[len(målt_x)-1]-målt_x[len(målt_x)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
-målt_v_y = (målt_y[len(målt_y)-1]-målt_y[len(målt_y)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
-målt_v = np.sqrt(målt_v_x**2+målt_v_y**2)
-
-print('Fart = ', målt_v)
 
 
 
-
-'''
 #Plotting
 
 baneform = plt.figure('y(x)',figsize=(12,3))
@@ -195,13 +174,12 @@ plt.ylabel('|f/N|',fontsize=20)
 #plt.ylim(0,0.350)
 plt.grid()
 plt.show()
-'''
+
 
 #Tid
 
 Tid  = plt.figure('y(x)',figsize=(12,3))
-plt.plot(t_x,x, label = "Teoretisk")
-plt.plot(målt_t,målt_x, label = 'Målt')
+plt.plot(t_x,x)
 plt.legend()
 plt.title('Posisjon av tid')
 plt.xlabel('tid (s)',fontsize=20)
@@ -211,7 +189,7 @@ plt.grid()
 plt.show()
 
 #fart, tid
-'''
+
 Avstand  = plt.figure('y(x)',figsize=(12,3))
 plt.plot(t_x,v_x)
 plt.title('Fart av tid')
@@ -220,12 +198,9 @@ plt.ylabel('v (s)',fontsize=20)
 #plt.ylim(0,0.350)
 plt.grid()
 plt.show()
-'''
+
 
 
 print('Antall forsøk',attempts)
 print('Festepunkthøyder (m)',yfast)
 print('Banens høyeste punkt (m)',np.max(y))
-
-print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
-print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
