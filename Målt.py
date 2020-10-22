@@ -34,6 +34,8 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 import csv
 
+#FRAM TIL LINJE 108 REGNES TEORETISKE VERDIER UT
+
 # Horisontal avstand mellom festepunktene er 200 mm
 h = 200
 xfast=np.asarray([0,h,2*h,3*h,4*h,5*h,6*h,7*h])
@@ -45,38 +47,13 @@ ymax = 300
 
 #yfast=np.asarray(np.random.randint(50, ymax, size=8))
 yfast = np.asarray([252,173,143,75,27,58,65,24])
-
-# inttan: tabell med 7 verdier for (yfast[n+1]-yfast[n])/h (n=0..7); dvs
-# banens stigningstall beregnet med utgangspunkt i de 8 festepunktene.
-inttan = np.diff(yfast)/h
-attempts=1
-# while-løkken sjekker om en eller flere av de 3 betingelsene ovenfor
-# ikke er tilfredsstilt; i så fall velges nye festepunkter inntil
-# de 3 betingelsene er oppfylt
-while (yfast[0] < yfast[1]*1.04 or
-       yfast[0] < yfast[2]*1.08 or
-       yfast[0] < yfast[3]*1.12 or
-       yfast[0] < yfast[4]*1.16 or
-       yfast[0] < yfast[5]*1.20 or
-       yfast[0] < yfast[6]*1.24 or
-       yfast[0] < yfast[7]*1.28 or
-       yfast[0] < 250 or
-       np.max(np.abs(inttan)) > 0.4 or
-       inttan[0] > -0.2):
-          yfast=np.asarray(np.random.randint(0, ymax, size=8))
-          inttan = np.diff(yfast)/h
-          attempts=attempts+1
-
-# Når programmet her har avsluttet while-løkka, betyr det at
-# tallverdiene i tabellen yfast vil resultere i en tilfredsstillende bane. 
-
+ 
 # Omregning fra mm til m:
 xfast = xfast/1000
 yfast = yfast/1000
 
 #Programmet beregner deretter de 7 tredjegradspolynomene, et
 #for hvert intervall mellom to nabofestepunkter.
-
 #Med scipy.interpolate-funksjonen CubicSpline:
 cs = CubicSpline(xfast, yfast, bc_type='natural')
 xmin = 0.000
@@ -119,17 +96,19 @@ målt_t = ([p[0] for p in data])
 #målt_y = ([p[2] for p in data])
 målt_v = ([p[1] for p in data])
 
-#målt_v_x = (målt_x[len(målt_x)-1]-målt_x[len(målt_x)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
-#målt_v_y = (målt_y[len(målt_y)-1]-målt_y[len(målt_y)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
-#målt_v = np.sqrt(målt_v_x**2+målt_v_y**2)
+målt_v_x = (målt_x[len(målt_x)-1]-målt_x[len(målt_x)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
+målt_v_y = (målt_y[len(målt_y)-1]-målt_y[len(målt_y)-2])/(målt_t[len(målt_t)-1]-målt_t[len(målt_t)-2])
+målt_v = np.sqrt(målt_v_x**2+målt_v_y**2)
 
-#print('Fart = ', målt_v)
+print('Fart = ', målt_v)
 
 
 
 
 
 #Plotting
+
+#Bane
 
 baneform = plt.figure('y(x)',figsize=(12,3))
 plt.plot(x,y,xfast,yfast,'*')
@@ -144,6 +123,7 @@ plt.show()
 
 
 #Vinkel
+
 vinkel = plt.figure('y(x)',figsize=(12,3))
 plt.plot(x,B)
 plt.title('Vinkel')
@@ -198,8 +178,8 @@ plt.grid()
 plt.show()
 
 
-#Tid
-'''
+#x(t) 
+
 Tid  = plt.figure('y(x)',figsize=(12,3))
 plt.plot(t_x,x, label = "Teoretisk")
 plt.plot(målt_t,målt_x, label = 'Målt')
@@ -210,8 +190,9 @@ plt.ylabel('x (m)',fontsize=20)
 #plt.ylim(0,0.350)
 plt.grid()
 plt.show()
-'''
-#fart, tid
+
+
+#v(t)
 
 Avstand  = plt.figure('y(x)',figsize=(12,3))
 plt.plot(t_x,v_x,målt_t,målt_v)
@@ -222,11 +203,3 @@ plt.ylabel('v (s)',fontsize=20)
 plt.grid()
 plt.show()
 
-
-
-print('Antall forsøk',attempts)
-print('Festepunkthøyder (m)',yfast)
-print('Banens høyeste punkt (m)',np.max(y))
-
-print('NB: SKRIV NED festepunkthøydene når du/dere er fornøyd med banen.')
-print('Eller kjør programmet på nytt inntil en attraktiv baneform vises.')
